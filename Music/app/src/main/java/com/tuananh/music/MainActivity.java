@@ -1,15 +1,20 @@
 package com.tuananh.music;
 
 import android.app.ActivityManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.File;
@@ -20,18 +25,17 @@ import java.io.IOException;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SeekBar.OnSeekBarChangeListener{
 
     @Bind(R.id.btnPlay)
     Button btnPlay;
-    @Bind(R.id.btnStop)
-    Button btnStop;
+    @Bind(R.id.sbSeekBar)
+    SeekBar sbSeekbar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        btnStop.setVisibility(View.GONE);
         Toast.makeText(this, Environment.getExternalStorageDirectory()+"/Download/cogai.mp3",Toast.LENGTH_LONG).show();
     }
 
@@ -40,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         if(isMyServiceRunning(MyService.class))
         {
-            btnStop.setVisibility(View.VISIBLE);
-            btnPlay.setVisibility(View.GONE);
+            btnPlay.setBackgroundResource(R.drawable.pause);
         }
     }
 
@@ -53,10 +56,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void playMusic(View view){
-        startService(new Intent(getBaseContext(),MyService.class));
-        btnStop.setVisibility(View.VISIBLE);
-        btnPlay.setVisibility(View.GONE);
+    public void playMusic(View view) {
+        if (isMyServiceRunning(MyService.class)) {
+            stopService(new Intent(getApplicationContext(), MyService.class));
+            btnPlay.setBackgroundResource(R.drawable.play);
+        } else {
+            startService(new Intent(getApplicationContext(), MyService.class));
+            btnPlay.setBackgroundResource(R.drawable.pause);
+        }
+    }
         /*MediaPlayer player=new MediaPlayer();
         try {
             player.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -94,13 +102,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         player.start();*/
-    }
 
-    public void stopMusic(View view){
-        stopService(new Intent(getBaseContext(),MyService.class));
-        btnStop.setVisibility(View.GONE);
-        btnPlay.setVisibility(View.VISIBLE);
-    }
 
     private boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
@@ -110,5 +112,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        
     }
 }

@@ -6,17 +6,21 @@ import android.content.res.AssetFileDescriptor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
 
-/**
- * Created by trinhtuananh on 5/19/2016.
- */
+import butterknife.Bind;
+
 public class MyService extends Service {
     MediaPlayer player;
     @Nullable
@@ -37,6 +41,7 @@ public class MyService extends Service {
         }
         player.setLooping(true); // Set looping
         player.setVolume(100, 100);
+
     }
 
     @Override
@@ -58,6 +63,8 @@ public class MyService extends Service {
         player.release();
         Toast.makeText(this, "Service destroyed",Toast.LENGTH_LONG).show();
     }
+
+
 
     /*public void playSound(String soundPath){
         MediaPlayer m = new MediaPlayer();
